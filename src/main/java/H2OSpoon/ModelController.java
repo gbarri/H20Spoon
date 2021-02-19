@@ -57,15 +57,22 @@ public class ModelController {
     @Autowired
     ReadCsv readCsv;
 
+    /*
+    complete this method to perform multiple predictions.
+    The import values should be importes from a csv from a known location
+    To facilitate this task you may find helpful the methods contained inside the ReadCsv class we declared a few lines before
+    */
     @GetMapping("predictFromXls")
     public List<Double> predictMultipleResults(@RequestParam(required = true) String filePath,
                                                @RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException {
         applyModel.init(modelName);
         List<Double> results = new ArrayList<>();
+        /* sol:
         List<RowData> rows = readCsv.toRowData(readCsv.getExcelFileAsWorkbook(filePath));
         for(RowData row : rows) {
             results.add(applyModel.predictedValue(row));
         }
+        */
         return results;
 
     }
