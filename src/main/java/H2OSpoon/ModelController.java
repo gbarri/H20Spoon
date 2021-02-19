@@ -33,16 +33,24 @@ public class ModelController {
     @Autowired
     ApplyModel applyModel;
 
+    /**
+     * complete the method.
+     * 1) recover the GenModel implemented in the POJO you have generated through H2O
+     * 2) insert all couples (fieldName, value) inside the RowData istance
+     */
     @PostMapping("predict")
     public Double predictResult(@RequestBody(required = true) RowDataDTO body) throws Exception {
 
         applyModel.init(body.getModelName());
         RowData row = new RowData();
+        /*
+        //solution:
         for(String name : applyModel.getModel().m.getNames()){
             if(body.getNameValueMap().containsKey(name)){
                 row.put(name, body.getNameValueMap().get(name));
             }
         }
+         */
         return applyModel.predictedValue(row);
     }
 
