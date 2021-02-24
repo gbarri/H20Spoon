@@ -7,10 +7,6 @@ public class ModelFeatures {
     private String modelName;
     private List<String> fieldInputNames = new ArrayList<>();
 
-/*  esercizio su intepretare la predizione
-   grafici in funzione di una delle 5 variabili??
-*/
-
     public ModelFeatures() {
     }
 

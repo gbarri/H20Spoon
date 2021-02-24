@@ -35,6 +35,7 @@ public class ApplyModel {
     public GenModel getRawModel(){ return model.m; }
 
     /*
+    Exercise 1:
         this method is used to effectively determine the prediction of the model for the RowData given.
         Which type is correct depends on the used model.
         Considering your trained model, which one is correct?

@@ -34,9 +34,14 @@ public class ModelController {
     ApplyModel applyModel;
 
     /**
+     * Exercise 2:
      * complete the method.
-     * 1) recover the GenModel implemented in the POJO you have generated through H2O
-     * 2) insert all couples (fieldName, value) inside the RowData istance
+     * The predictResult is meant to perform a prediction based on the given model for the input data RawDataDTO.
+     * To do so you must insert all couples (fieldName, value) inside the RowData istance named, in this example, row.
+     * The names of the input files according to the model can be retrieved calling the method getNames() given by the GenModel class.
+     * 1) retrieve the genModel from the class EasyPredictModelWrapper initialized in ApplyModel class
+     * 2) retrieve the model fields names
+     * 3) insert the couples (fieldName, value) inside the row data instance
      */
     @PostMapping("predict")
     public Double predictResult(@RequestBody(required = true) RowDataDTO body) throws Exception {
@@ -58,7 +63,9 @@ public class ModelController {
     ReadCsv readCsv;
 
     /*
+    Exercise 3:
     complete this method to perform multiple predictions.
+    TODO: da completare la descrizione delle classi
     The import values should be importes from a csv from a known location
     To facilitate this task you may find helpful the methods contained inside the ReadCsv class we declared a few lines before
     */
@@ -109,4 +116,12 @@ public class ModelController {
         }
         return feat;
     }
+
+    /**
+     * Exercise 4:
+     *   create ex novo an endpoint that will apply predictions to an input retrived from an online microservice
+     *   The link and endpoint are shared during the exercise part of the labcamp.
+     *   We suggest a look to Spring tutorial: https://spring.io/guides/gs/consuming-rest/
+     *   as an excellent starting point for this part
+     */
 }
