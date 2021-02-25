@@ -11,10 +11,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
- * Wrapper class for a EasyPredictModelWrapper, described inside the documentation at https://docs.h2o.ai/h2o/latest-stable/h2o-genmodel/javadoc/index.html
+ * Wrapper class for a EasyPredictModelWrapper,
+ * described inside the documentation at https://docs.h2o.ai/h2o/latest-stable/h2o-genmodel/javadoc/index.html
  * This class initilizes the model variable based on the name it has been given,
  * allowing for test purpose online to call multiple models to be called without the need to restart the application.
- * In a production context it would be better to instantiate one instance through A@utowired annotation
+ * In a production context it would be better to instantiate one instance through @Autowired annotation
  * and re-deploy the microservice for each update of the model
  */
 @Component
