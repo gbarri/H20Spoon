@@ -46,7 +46,7 @@ public class ModelController {
      * 3) insert the couples (fieldName, value) inside the row data instance
      */
     @PostMapping("predict")
-    public Double predictResult(@RequestBody(required = true) RowDataDTO body) throws Exception {
+    public ResponseEntity<Double> predictResult(@RequestBody(required = true) RowDataDTO body) throws Exception {
 
         applyModel.init(body.getModelName());
         RowData row = new RowData();
@@ -58,7 +58,7 @@ public class ModelController {
             }
         }
          */
-        return applyModel.predictedValue(row);
+        return ResponseEntity.ok(applyModel.predictedValue(row));
     }
 
     /**
@@ -75,12 +75,12 @@ public class ModelController {
     /*
     Exercise 3:
     complete this method to perform multiple predictions.
-    The import values should be importes from a csv from a known location,indicated as a path
+    The import values should be importes from an excel file from a known location,indicated as a path
     (its value depends on where you placed your input file).
     To facilitate this task you may find helpful the methods contained inside the ReadCsv class we declared a few lines before
     */
     @GetMapping("predictFromXls")
-    public List<Double> predictMultipleResults(@RequestParam(required = true) String filePath,
+    public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String filePath,
                                                @RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException {
         applyModel.init(modelName);
         List<Double> results = new ArrayList<>();
@@ -90,12 +90,12 @@ public class ModelController {
             results.add(applyModel.predictedValue(row));
         }
         */
-        return results;
+        return ResponseEntity.ok(results);
 
     }
 
     @GetMapping("model")
-    public List<String> listModels() {
+    public ResponseEntity<List<String>> listModels() {
         List<String> modelsName = new ArrayList<>();
         Reflections reflections = new Reflections(
                 "H2OSpoon", new SubTypesScanner());
@@ -104,11 +104,11 @@ public class ModelController {
         for (Class<? extends GenModel> aClass : classes) {
             modelsName.add(aClass.getName());
         }
-        return modelsName;
+        return ResponseEntity.ok(modelsName);
     }
 
     @GetMapping("model/{modelName}")
-    public ModelFeatures getDetails(@PathParam("modelName") String modelName) {
+    public ResponseEntity<ModelFeatures> getDetails(@PathParam("modelName") String modelName) {
         ModelFeatures feat = new ModelFeatures();
         try {
             applyModel.init(modelName);
@@ -123,7 +123,7 @@ public class ModelController {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        return feat;
+        return ResponseEntity.ok(feat);
     }
 
     /**
@@ -132,11 +132,13 @@ public class ModelController {
      * The link and endpoint are shared during the exercise part of the labcamp.
      * We suggest a look to Spring tutorial: https://spring.io/guides/gs/consuming-rest/
      * as an excellent starting point for this part.
-     * 1) define the endpoint through an annotation such as @GetMapping(endpoint)
-     * 2) have a look at the WebServicePollutionHistory and its methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi)
-     * that make a request toward an online service for the registered value of benzene/titania for the last 48 hours
-     * 3) similarly to what have been done in Exercise 3, initialize the model and fill a RowData instance with the recovered values.
-     * 4) Invoke the predictedValue method to recall the model for the prepared info
+     * 1) define a new pubblic method that returns a Resource<Double> and requires a String modelName as input
+     * 2) Annotate the endpoint through an annotation such as @GetMapping(<nome endpoint>)
+     * 3) initialize the model as done in the other methods
+     * 4) Create a new variable Rowdata and put all input values for your model.
+     *    To retrieve the input values for each lag of benzene and titania, have a look at the WebServicePollutionHistory and its methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi).
+     *    Those methods make a request toward an online service for the registered value of benzene/titania for the last 48 hours
+     * 5) Invoke the predictedValue method to recall the model for the prepared info and return the value
      */
 
     /*
