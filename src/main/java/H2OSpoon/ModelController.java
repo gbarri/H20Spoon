@@ -137,8 +137,8 @@ public class ModelController {
      * 2) Annotate the endpoint through an annotation such as @GetMapping(<nome endpoint>)
      * 3) initialize the model as done in the other methods
      * 4) Create a new variable Rowdata and put all input values for your model.
-     *    To retrieve the input values for each lag of benzene and titania, have a look at the WebServicePollutionHistory and its exposed methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi).
-     *    Those methods make a request toward an online service for the registered value of benzene/titania for the last 48 hours
+     *    To retrieve the input values for each lag of benzene and titanium, have a look at the WebServicePollutionHistory and its exposed methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi).
+     *    Those methods make a request toward an online service for the registered value of benzene/titanium for the last 48 hours
      * 6) Invoke the predictedValue method to recall the model for the prepared info and return the value
      */
 
@@ -156,10 +156,10 @@ public class ModelController {
             Double value = history.getBenzenelagNumber(i);
             row.put(benzene + Integer.toString(i), value);
         }
-        String titania = "titania_lag";
+        String titanium = "titanium_lag";
         for (int i = 1; i <= 48; i++) {
             Double value = history.getTitanialagNumber(i);
-            row.put(titania + Integer.toString(i), value);
+            row.put(titanium + Integer.toString(i), value);
         }
         Double predictedValue = applyModel.predictedValue(row);
         logger.info("predicted value for benzene is {}", predictedValue);
