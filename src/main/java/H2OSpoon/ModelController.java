@@ -7,23 +7,17 @@ import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
-import javax.xml.ws.Service;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/", produces = {MediaType.APPLICATION_JSON_VALUE,
@@ -79,9 +73,16 @@ public class ModelController {
     (its value depends on where you placed your input file).
     To facilitate this task you may find helpful the methods contained inside the ReadCsv class we declared a few lines before
     */
+    @Autowired
+    Environment environment;
+
     @GetMapping("predictFromXls")
-    public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String filePath,
-                                               @RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException {
+    public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException {
+        if(!environment.containsProperty("source.excel.path")){
+            throw new IllegalStateException("please include a path for the source data file (in excel format)");
+        }
+        String filePath = environment.getProperty("source.excel.path");
+
         applyModel.init(modelName);
         List<Double> results = new ArrayList<>();
         /* sol:
@@ -132,13 +133,13 @@ public class ModelController {
      * The link and endpoint are shared during the exercise part of the labcamp.
      * We suggest a look to Spring tutorial: https://spring.io/guides/gs/consuming-rest/
      * as an excellent starting point for this part.
-     * 1) define a new pubblic method that returns a Resource<Double> and requires a String modelName as input
+     * 1) define a new pubblic method that returns a ResponseEntity<Double> and requires a String modelName as input
      * 2) Annotate the endpoint through an annotation such as @GetMapping(<nome endpoint>)
      * 3) initialize the model as done in the other methods
      * 4) Create a new variable Rowdata and put all input values for your model.
-     *    To retrieve the input values for each lag of benzene and titania, have a look at the WebServicePollutionHistory and its methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi).
+     *    To retrieve the input values for each lag of benzene and titania, have a look at the WebServicePollutionHistory and its exposed methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi).
      *    Those methods make a request toward an online service for the registered value of benzene/titania for the last 48 hours
-     * 5) Invoke the predictedValue method to recall the model for the prepared info and return the value
+     * 6) Invoke the predictedValue method to recall the model for the prepared info and return the value
      */
 
     /*
@@ -146,7 +147,6 @@ public class ModelController {
     @Autowired
     WebServicePollutionHistory history;
 
-    //TODO check variables names!!
     @GetMapping("onlinePrediction")
     public ResponseEntity<Double> getOnlinePrediction(String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, PredictException {
         applyModel.init(modelName);

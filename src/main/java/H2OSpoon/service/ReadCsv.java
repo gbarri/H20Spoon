@@ -2,6 +2,7 @@ package H2OSpoon.service;
 
 import hex.genmodel.easy.RowData;
 import nonapi.io.github.classgraph.utils.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.slf4j.Logger;
@@ -63,8 +64,8 @@ public class ReadCsv {
             }
             for (int c = 0, cn = row.getLastCellNum() ; c < cn ; c++) {
                 Cell cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                if (cell != null) {
-                    double value = cell.getNumericCellValue();
+                if (cell != null && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                    double value = Double.parseDouble(cell.getStringCellValue());
                     newData.put(headerNames.get(c), value);
                 }
             }
