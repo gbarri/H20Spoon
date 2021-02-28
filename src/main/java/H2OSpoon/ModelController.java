@@ -5,6 +5,9 @@ import H2OSpoon.service.WebServicePollutionHistory;
 import hex.genmodel.GenModel;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
@@ -40,6 +43,7 @@ public class ModelController {
      * 3) insert the couples (fieldName, value) inside the row data instance
      */
     @PostMapping("predict")
+    @Operation(description = "Apply the H2O Model identified by its name to the input data contained inside the body of the request, returns the predicted value")
     public ResponseEntity<Double> predictResult(@RequestBody(required = true) RowDataDTO body) throws Exception {
 
         applyModel.init(body.getModelName());
@@ -77,6 +81,7 @@ public class ModelController {
     Environment environment;
 
     @GetMapping("predictFromXls")
+    @Operation(description = "Perform several predictions using an excel file as source")
     public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException {
         if(!environment.containsProperty("source.excel.path")){
             throw new IllegalStateException("please include a path for the source data file (in excel format)");
@@ -96,6 +101,7 @@ public class ModelController {
     }
 
     @GetMapping("model")
+    @Operation(description = "List the name of all H2O models inside the H2OSpoon package")
     public ResponseEntity<List<String>> listModels() {
         List<String> modelsName = new ArrayList<>();
         Reflections reflections = new Reflections(
@@ -109,6 +115,7 @@ public class ModelController {
     }
 
     @GetMapping("model/{modelName}")
+    @Operation(description = "List the name of all input variables required by a specific model")
     public ResponseEntity<ModelFeatures> getDetails(@PathParam("modelName") String modelName) {
         ModelFeatures feat = new ModelFeatures();
         try {
@@ -148,6 +155,7 @@ public class ModelController {
     WebServicePollutionHistory history;
 
     @GetMapping("onlinePrediction")
+    @Operation(description = "Predict the value of Benzene in the next 24 hours. The past values of Benzene and Titanium are retrieved from an external source")
     public ResponseEntity<Double> getOnlinePrediction(String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, PredictException {
         applyModel.init(modelName);
         RowData row = new RowData();
