@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 @RestController
@@ -82,7 +83,7 @@ public class ModelController {
 
     @GetMapping("predictFromXls")
     @Operation(description = "Perform several predictions using an excel file as source")
-    public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException {
+    public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException, NoSuchMethodException, InvocationTargetException {
         if(!environment.containsProperty("source.excel.path")){
             throw new IllegalStateException("please include a path for the source data file (in excel format)");
         }
@@ -90,7 +91,7 @@ public class ModelController {
 
         applyModel.init(modelName);
         List<Double> results = new ArrayList<>();
-        /* sol:
+        /* //sol:
         List<RowData> rows = readCsv.toRowData(readCsv.getExcelFileAsWorkbook(filePath));
         for(RowData row : rows) {
             results.add(applyModel.predictedValue(row));
@@ -129,6 +130,10 @@ public class ModelController {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
         return ResponseEntity.ok(feat);

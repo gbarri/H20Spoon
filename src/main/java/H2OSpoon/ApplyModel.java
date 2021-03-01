@@ -4,11 +4,11 @@ import hex.genmodel.GenModel;
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
-import hex.genmodel.easy.prediction.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Wrapper class for a EasyPredictModelWrapper,
@@ -29,10 +29,10 @@ public class ApplyModel {
     public ApplyModel() {
     }
 
-    public void init(String modelClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public void init(String modelClassName) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         logger.info("initializing model {}", modelClassName);
         this.modelClassName = modelClassName;
-        GenModel rawModel = (hex.genmodel.GenModel) Class.forName(modelClassName).newInstance();
+        GenModel rawModel = (hex.genmodel.GenModel) Class.forName(modelClassName).getDeclaredConstructor().newInstance();
         this.model = new EasyPredictModelWrapper(rawModel);
     }
 
@@ -59,6 +59,7 @@ public class ApplyModel {
         //DimReductionModelPrediction predicted = model.predictDimReduction(row);
         //Word2VecPrediction predicted = model.predictWord2Vec(row);
         //KLimeModelPrediction predicted = model.predictKLime(row);
+        logger.info("Predictied {} from {} and input {}", "##fillMeIn!##", modelClassName, row);
         return null;
     }
 }
