@@ -1,13 +1,10 @@
 package H2OSpoon;
 
-import H2OSpoon.service.ReadCsv;
-import H2OSpoon.service.WebServicePollutionHistory;
+import H2OSpoon.service.ReadExcel;
 import hex.genmodel.GenModel;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
@@ -51,7 +48,7 @@ public class ModelController {
         RowData row = new RowData();
         /*
         //solution:
-        for(String name : applyModel.getModel().m.getNames()){
+        for(String name : applyModel.getRawModel().getNames()){
             if(body.getNameValueMap().containsKey(name)){
                 row.put(name, body.getNameValueMap().get(name));
             }
@@ -62,21 +59,21 @@ public class ModelController {
 
     /**
      * an instance of a Service autowired directly inside the controller.
-     * For a properly configured class (see the @Service annotaion inside class ReadCsv)
-     * Spring instantiate automatically the variable readCsv with an instance of the service class ReadCsv.
+     * For a properly configured class (see the @Service annotaion inside class ReadExcel)
+     * Spring instantiate automatically the variable readExcel with an instance of the service class ReadExcel.
      * We do not need to manually instantiate it via the keyword "new".
      * You may find additional information and a more complete description of this mechanics at
      * https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-basics
      */
     @Autowired
-    ReadCsv readCsv;
+    ReadExcel readExcel;
 
     /*
     Exercise 3:
     complete this method to perform multiple predictions.
     The import values should be importes from an excel file from a known location,indicated as a path
     (its value depends on where you placed your input file).
-    To facilitate this task you may find helpful the methods contained inside the ReadCsv class we declared a few lines before
+    To facilitate this task you may find helpful the methods contained inside the ReadExcel class we declared a few lines before
     */
     @Autowired
     Environment environment;
@@ -92,7 +89,7 @@ public class ModelController {
         applyModel.init(modelName);
         List<Double> results = new ArrayList<>();
         /* //sol:
-        List<RowData> rows = readCsv.toRowData(readCsv.getExcelFileAsWorkbook(filePath));
+        List<RowData> rows = readExcel.toRowData(readExcel.getExcelFileAsWorkbook(filePath));
         for(RowData row : rows) {
             results.add(applyModel.predictedValue(row));
         }

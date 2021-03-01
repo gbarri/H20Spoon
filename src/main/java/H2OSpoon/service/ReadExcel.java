@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-public class ReadCsv {
+public class ReadExcel {
 
-    Logger logger = LoggerFactory.getLogger("ReadCsv");
+    Logger logger = LoggerFactory.getLogger("ReadExcel");
 
     public Workbook getExcelFileAsWorkbook(String path) throws IOException {
         Workbook document;
