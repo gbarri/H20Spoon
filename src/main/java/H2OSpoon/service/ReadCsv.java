@@ -64,8 +64,8 @@ public class ReadCsv {
             }
             for (int c = 0, cn = row.getLastCellNum() ; c < cn ; c++) {
                 Cell cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                if (cell != null && StringUtils.isNotEmpty(cell.getStringCellValue())) {
-                    double value = Double.parseDouble(cell.getStringCellValue());
+                if (cell != null) {
+                    double value = cell.getNumericCellValue();
                     newData.put(headerNames.get(c), value);
                 }
             }
