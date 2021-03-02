@@ -49,27 +49,11 @@ public class ModelController {
         ApplyModel applyModel = beanFactory.getBean(ApplyModel.class);
         applyModel.init(body.getModelName());
         RowData row = new RowData();
-
-        //solution:
-        for(String name : applyModel.getRawModel().getNames()){
-            if(body.getNameValueMap().containsKey(name)){
-                row.put(name, body.getNameValueMap().get(name));
-            }
-        }
-
+        //##
+        // populate the variable row
+        //##
         return ResponseEntity.ok(applyModel.predictedValue(row));
     }
-
-    /**
-     * an instance of a Service autowired directly inside the controller.
-     * For a properly configured class (see the @Service annotaion inside class ReadExcel)
-     * Spring instantiate automatically the variable readExcel with an instance of the service class ReadExcel.
-     * We do not need to manually instantiate it via the keyword "new".
-     * You may find additional information and a more complete description of this mechanics at
-     * https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-basics
-     */
-    @Autowired
-    ReadExcel readExcel;
 
     /*
     Exercise 3:
@@ -143,11 +127,12 @@ public class ModelController {
      * as an excellent starting point for this part.
      * 1) define a new pubblic method that returns a ResponseEntity<Double> and requires a String modelName as input
      * 2) Annotate the endpoint through an annotation such as @GetMapping(<nome endpoint>)
-     * 3) initialize the model as done in the other methods
-     * 4) Create a new variable Rowdata and put all input values for your model.
-     *    To retrieve the input values for each lag of benzene and titanium, have a look at the WebServicePollutionHistory and its exposed methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi).
+     * 3) initialize the command class PredictFromWebCommand as done in the other method
+     * 4) inside the command class initialize ApplyModel instance
+     * 5) To retrieve the input values for each lag of benzene and titanium, have a look at the WebServicePollutionHistory and its exposed methods getBenzenelagNumber(String lagi) and getTitanialagNumber(String lagi).
      *    Those methods make a request toward an online service for the registered value of benzene/titanium for the last 48 hours
-     * 6) Invoke the predictedValue method to recall the model for the prepared info and return the value
+     * 6) Create a new variable Rowdata and put all input values for your model.
+     * 7) Invoke the predictedValue method to recall the model for the prepared info and return the value
      */
 
 
