@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class RowDataDTO {
     private String modelName;
-    //private List<Double> inputValues;
     private Map<String, Double> nameValueMap;
 
     public RowDataDTO() {

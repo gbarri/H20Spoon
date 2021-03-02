@@ -27,8 +27,22 @@ public class ModelController {
 
     static Logger logger = LoggerFactory.getLogger("ModelController");
 
+    /**
+     * an instance of a Service autowired directly inside the controller.
+     * For a properly configured class (see the @Service annotaion inside class ReadExcel)
+     * Spring instantiate automatically the variable readExcel with an instance of the service class ReadExcel.
+     * We do not need to manually instantiate it via the keyword "new".
+     * You may find additional information and a more complete description of this mechanics at
+     * https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-basics
+     */
+    @Autowired
+    ReadExcel readExcel;
+
     @Autowired
     ApplyModel applyModel;
+
+    @Autowired
+    Environment environment;
 
     /**
      * Exercise 2:
@@ -46,37 +60,16 @@ public class ModelController {
 
         applyModel.init(body.getModelName());
         RowData row = new RowData();
-        /*
-        //solution:
-        for(String name : applyModel.getRawModel().getNames()){
-            if(body.getNameValueMap().containsKey(name)){
-                row.put(name, body.getNameValueMap().get(name));
-            }
-        }
-         */
         return ResponseEntity.ok(applyModel.predictedValue(row));
     }
-
-    /**
-     * an instance of a Service autowired directly inside the controller.
-     * For a properly configured class (see the @Service annotaion inside class ReadExcel)
-     * Spring instantiate automatically the variable readExcel with an instance of the service class ReadExcel.
-     * We do not need to manually instantiate it via the keyword "new".
-     * You may find additional information and a more complete description of this mechanics at
-     * https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-basics
-     */
-    @Autowired
-    ReadExcel readExcel;
 
     /*
     Exercise 3:
     complete this method to perform multiple predictions.
     The import values should be importes from an excel file from a known location,indicated as a path
     (its value depends on where you placed your input file).
-    To facilitate this task you may find helpful the methods contained inside the ReadExcel class we declared a few lines before
+    To facilitate this task you may find helpful the methods contained inside the ReadExcel class we declared at start of this class
     */
-    @Autowired
-    Environment environment;
 
     @GetMapping("predictFromXls")
     @Operation(description = "Perform several predictions using an excel file as source")
@@ -88,12 +81,7 @@ public class ModelController {
 
         applyModel.init(modelName);
         List<Double> results = new ArrayList<>();
-        /* //sol:
-        List<RowData> rows = readExcel.toRowData(readExcel.getExcelFileAsWorkbook(filePath));
-        for(RowData row : rows) {
-            results.add(applyModel.predictedValue(row));
-        }
-        */
+        //insert code here
         return ResponseEntity.ok(results);
 
     }
@@ -150,31 +138,5 @@ public class ModelController {
      *    Those methods make a request toward an online service for the registered value of benzene/titanium for the last 48 hours
      * 6) Invoke the predictedValue method to recall the model for the prepared info and return the value
      */
-
-    /*
-    //solution:
-    @Autowired
-    WebServicePollutionHistory history;
-
-    @GetMapping("onlinePrediction")
-    @Operation(description = "Predict the value of Benzene in the next 24 hours. The past values of Benzene and Titanium are retrieved from an external source")
-    public ResponseEntity<Double> getOnlinePrediction(String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, PredictException, NoSuchMethodException, InvocationTargetException {
-        applyModel.init(modelName);
-        RowData row = new RowData();
-        String benzene = "benzene_lag";
-        for (int i = 1; i <= 48; i++) {
-            Double value = history.getBenzenelagNumber(i);
-            row.put(benzene + Integer.toString(i), value);
-        }
-        String titanium = "titanium_lag";
-        for (int i = 1; i <= 48; i++) {
-            Double value = history.getTitaniumLagNumber(i);
-            row.put(titanium + Integer.toString(i), value);
-        }
-        Double predictedValue = applyModel.predictedValue(row);
-        logger.info("predicted value for benzene is {}", predictedValue);
-        return ResponseEntity.ok(predictedValue);
-    }
-    */
 
 }

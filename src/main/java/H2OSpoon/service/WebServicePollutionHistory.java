@@ -60,15 +60,6 @@ public class WebServicePollutionHistory {
      */
     public Double getTitaniumLagNumber(String lagi) {
         throw new UnsupportedOperationException("must be completed");
-        /*
-         //sol:
-        RestTemplate restTemplate = new RestTemplate();
-        String resourceUrl = retrieveHost()+"/api/titanium/{lagi}";
-        ResponseEntity<Double> response
-                = restTemplate.getForEntity(resourceUrl, Double.class, lagi);
-        logger.debug("titanium_lag{} recorded value is {}", lagi, response.getBody());
-        return response.getBody();
-        */
     }
 
     public Double getTitaniumLagNumber(Integer lagi) {
