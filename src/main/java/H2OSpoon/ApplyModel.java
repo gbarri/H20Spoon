@@ -49,6 +49,7 @@ public class ApplyModel {
         Which type is correct depends on the used model.
         Considering your trained model, which one is correct?
         decomment the right one to complete the method and return its value
+        Share your answer in the pool!! =)
      */
     public Double predictedValue(RowData row) throws PredictException {
         //OrdinalModelPrediction predicted = model.predictOrdinal(row);

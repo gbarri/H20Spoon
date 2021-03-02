@@ -2,6 +2,8 @@ package H2OSpoon.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,15 +22,25 @@ public class WebServicePollutionHistory {
 
     Logger logger = LoggerFactory.getLogger("WebServicePollutionHistory");
 
+    @Autowired
+    Environment environment;
+
     /**
      * during the labcamp the hostname will be shared via chat.
-     * please be sure to change hostUrl from "http://localhost:8080/" to the shared information
+     * please be sure to change hostUrl inside application.properties from "http://localhost:8080/" to the shared information
      */
-    public static String hostUrl = "http://localhost:8080";
+
+    private String retrieveHost(){
+        if(environment.containsProperty("source.externalms.host")){
+            return environment.getProperty("source.externalms.host");
+        }else {
+            return "##control the application.properties file##";
+        }
+    }
 
     public Double getBenzenelagNumber(String lagi) {
         RestTemplate restTemplate = new RestTemplate();
-        String resourceUrl = "/api/benzene/{lagi}";
+        String resourceUrl = retrieveHost()+"/api/benzene/{lagi}";
         ResponseEntity<Double> response
                 = restTemplate.getForEntity(resourceUrl, Double.class, lagi);
         logger.debug("benzene_lag{} recorded value is {}", lagi, response.getBody());
@@ -39,17 +51,28 @@ public class WebServicePollutionHistory {
         return this.getBenzenelagNumber(Integer.toString(lagi));
     }
 
-    public Double getTitanialagNumber(String lagi) {
+    /**
+     * exercise 4:
+     * the remote mciroservice exposes two apis to retrieve the titanim concentration with a given lag
+     * In a similar fashion to what has been done with the benzene implement a method that retrieves the titanium levels
+     * 1) find the correct api to recall
+     * 2) as above use a RestTemplate to make a request to the defined endpoint
+     */
+    public Double getTitaniumLagNumber(String lagi) {
+        throw new UnsupportedOperationException("must be completed");
+        /*
+         //sol:
         RestTemplate restTemplate = new RestTemplate();
-        String resourceUrl = "/api/titania/{lagi}";
+        String resourceUrl = retrieveHost()+"/api/titanium/{lagi}";
         ResponseEntity<Double> response
                 = restTemplate.getForEntity(resourceUrl, Double.class, lagi);
-        logger.debug("titania_lag{} recorded value is {}", lagi, response.getBody());
+        logger.debug("titanium_lag{} recorded value is {}", lagi, response.getBody());
         return response.getBody();
+        */
     }
 
-    public Double getTitanialagNumber(Integer lagi) {
-        return this.getTitanialagNumber(Integer.toString(lagi));
+    public Double getTitaniumLagNumber(Integer lagi) {
+        return this.getTitaniumLagNumber(Integer.toString(lagi));
     }
 
 }

@@ -1,6 +1,6 @@
 package H2OSpoon;
 
-import H2OSpoon.service.ReadExcel;
+import H2OSpoon.service.*;
 import hex.genmodel.GenModel;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.exception.PredictException;
@@ -158,7 +158,7 @@ public class ModelController {
 
     @GetMapping("onlinePrediction")
     @Operation(description = "Predict the value of Benzene in the next 24 hours. The past values of Benzene and Titanium are retrieved from an external source")
-    public ResponseEntity<Double> getOnlinePrediction(String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, PredictException {
+    public ResponseEntity<Double> getOnlinePrediction(String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, PredictException, NoSuchMethodException, InvocationTargetException {
         applyModel.init(modelName);
         RowData row = new RowData();
         String benzene = "benzene_lag";
@@ -168,7 +168,7 @@ public class ModelController {
         }
         String titanium = "titanium_lag";
         for (int i = 1; i <= 48; i++) {
-            Double value = history.getTitanialagNumber(i);
+            Double value = history.getTitaniumLagNumber(i);
             row.put(titanium + Integer.toString(i), value);
         }
         Double predictedValue = applyModel.predictedValue(row);
