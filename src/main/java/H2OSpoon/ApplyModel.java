@@ -7,6 +7,7 @@ import hex.genmodel.easy.exception.PredictException;
 import hex.genmodel.easy.prediction.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,12 +15,13 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Wrapper class for a EasyPredictModelWrapper,
  * described inside the documentation at https://docs.h2o.ai/h2o/latest-stable/h2o-genmodel/javadoc/index.html
- * This class initilizes the model variable based on the name it has been given,
+ * This class initializes the model variable based on the name it has been given,
  * allowing for test purpose online to call multiple models to be called without the need to restart the application.
  * In a production context it would be better to instantiate one instance through @Autowired annotation
  * and re-deploy the microservice for each update of the model
  */
 @Component
+@Scope("prototype")
 public class ApplyModel {
 
     static Logger logger = LoggerFactory.getLogger("ModelController");
@@ -57,11 +59,11 @@ public class ApplyModel {
         //MultinomialModelPrediction predicted = model.predictMultinomial(row);
         //ClusteringModelPrediction predicted = model.predictClustering(row);
         //BinomialModelPrediction predicted = model.predictBinomial(row);
-        //RegressionModelPrediction predicted = model.predictRegression(row);
+        RegressionModelPrediction predicted = model.predictRegression(row);
         //DimReductionModelPrediction predicted = model.predictDimReduction(row);
         //Word2VecPrediction predicted = model.predictWord2Vec(row);
         //KLimeModelPrediction predicted = model.predictKLime(row);
-        logger.info("Predictied {} from {} and input {}", "##fillMeIn!##", modelClassName, row);
-        return null;
+        logger.info("Predictied {} from {} and input {}", "regression model", modelClassName, row);
+        return predicted.value;
     }
 }

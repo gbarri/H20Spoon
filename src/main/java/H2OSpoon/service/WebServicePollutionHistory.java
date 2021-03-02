@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
  * * @Service and @Component annoation allows Spring context to discover this class and istamtiate it
  * Be sure to uncomment the following line!
  */
-//@Service
+@Service
 public class WebServicePollutionHistory {
 
     Logger logger = LoggerFactory.getLogger("WebServicePollutionHistory");
@@ -59,7 +59,15 @@ public class WebServicePollutionHistory {
      * 2) as above use a RestTemplate to make a request to the defined endpoint
      */
     public Double getTitaniumLagNumber(String lagi) {
-        throw new UnsupportedOperationException("must be completed");
+        //throw new UnsupportedOperationException("must be completed");
+
+         //sol:
+        RestTemplate restTemplate = new RestTemplate();
+        String resourceUrl = retrieveHost()+"/api/titanium/{lagi}";
+        ResponseEntity<Double> response
+                = restTemplate.getForEntity(resourceUrl, Double.class, lagi);
+        logger.debug("titanium_lag{} recorded value is {}", lagi, response.getBody());
+        return response.getBody();
     }
 
     public Double getTitaniumLagNumber(Integer lagi) {
