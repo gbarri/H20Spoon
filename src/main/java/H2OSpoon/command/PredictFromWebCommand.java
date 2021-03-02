@@ -21,9 +21,6 @@ public class PredictFromWebCommand {
     @Autowired
     BeanFactory beanFactory;
 
-    @Autowired
-    WebServicePollutionHistory history;
-
     static Logger logger = LoggerFactory.getLogger("PredictFromWebCommand");
 
     String modelName;
@@ -32,26 +29,7 @@ public class PredictFromWebCommand {
         this.modelName = modelName;
     }
 
-    public Double execute() throws Exception {
-        ApplyModel applyModel = beanFactory.getBean(ApplyModel.class);
-        applyModel.init(modelName);
-
-        logger.info("retrieving pollutions records ...");
-        RowData row = new RowData();
-        String benzene = "benzene_lag";
-        for (int i = 1; i <= 48; i++) {
-            Double value = history.getBenzenelagNumber(i);
-            row.put(benzene + Integer.toString(i), value);
-        }
-        String titanium = "titanium_lag";
-        for (int i = 1; i <= 48; i++) {
-            Double value = history.getTitaniumLagNumber(i);
-            row.put(titanium + Integer.toString(i), value);
-        }
-        logger.info("retrieving pollutions records done");
-
-        Double predictedValue = applyModel.predictedValue(row);
-        logger.info("predicted value for benzene is {}", predictedValue);
-        return predictedValue;
+    public void execute() throws Exception {
+        throw new UnsupportedOperationException("to be completed");
     }
 }

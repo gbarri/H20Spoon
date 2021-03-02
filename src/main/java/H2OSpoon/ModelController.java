@@ -136,21 +136,4 @@ public class ModelController {
      */
 
 
-    //solution:
-    @Autowired
-    WebServicePollutionHistory history;
-
-    @GetMapping("onlinePrediction")
-    @Operation(description = "Predict the value of Benzene in the next 24 hours. The past values of Benzene and Titanium are retrieved from an external source")
-    public ResponseEntity<Double> getOnlinePrediction(String modelName) throws Exception {
-        ApplyModel applyModel = beanFactory.getBean(ApplyModel.class);
-        applyModel.init(modelName);
-
-        PredictFromWebCommand command = beanFactory.getBean(PredictFromWebCommand.class, modelName);
-        Double predictedValue = command.execute();
-
-        return ResponseEntity.ok(predictedValue);
-    }
-
-
 }

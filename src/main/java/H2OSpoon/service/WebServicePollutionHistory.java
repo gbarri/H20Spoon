@@ -34,7 +34,7 @@ public class WebServicePollutionHistory {
         if(environment.containsProperty("source.externalms.host")){
             return environment.getProperty("source.externalms.host");
         }else {
-            return "##control the application.properties file##";
+            return "## please check the application.properties file##";
         }
     }
 
@@ -59,15 +59,7 @@ public class WebServicePollutionHistory {
      * 2) as above use a RestTemplate to make a request to the defined endpoint
      */
     public Double getTitaniumLagNumber(String lagi) {
-        //throw new UnsupportedOperationException("must be completed");
-
-         //sol:
-        RestTemplate restTemplate = new RestTemplate();
-        String resourceUrl = retrieveHost()+"/api/titanium/{lagi}";
-        ResponseEntity<Double> response
-                = restTemplate.getForEntity(resourceUrl, Double.class, lagi);
-        logger.debug("titanium_lag{} recorded value is {}", lagi, response.getBody());
-        return response.getBody();
+        throw new UnsupportedOperationException("must be completed");
     }
 
     public Double getTitaniumLagNumber(Integer lagi) {
