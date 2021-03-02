@@ -1,5 +1,7 @@
 package H2OSpoon;
 
+import H2OSpoon.command.PredictFromWebCommand;
+import H2OSpoon.command.PredictFromXlsxCommand;
 import H2OSpoon.service.*;
 import hex.genmodel.GenModel;
 import hex.genmodel.easy.RowData;
@@ -9,6 +11,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
@@ -28,7 +31,7 @@ public class ModelController {
     static Logger logger = LoggerFactory.getLogger("ModelController");
 
     @Autowired
-    ApplyModel applyModel;
+    BeanFactory beanFactory;
 
     /**
      * Exercise 2:
@@ -43,17 +46,17 @@ public class ModelController {
     @PostMapping("predict")
     @Operation(description = "Apply the H2O Model identified by its name to the input data contained inside the body of the request, returns the predicted value")
     public ResponseEntity<Double> predictResult(@RequestBody(required = true) RowDataDTO body) throws Exception {
-
+        ApplyModel applyModel = beanFactory.getBean(ApplyModel.class);
         applyModel.init(body.getModelName());
         RowData row = new RowData();
-        /*
+
         //solution:
         for(String name : applyModel.getRawModel().getNames()){
             if(body.getNameValueMap().containsKey(name)){
                 row.put(name, body.getNameValueMap().get(name));
             }
         }
-         */
+
         return ResponseEntity.ok(applyModel.predictedValue(row));
     }
 
@@ -70,30 +73,25 @@ public class ModelController {
 
     /*
     Exercise 3:
-    complete this method to perform multiple predictions.
+    complete the command method to perform multiple predictions.
     The import values should be importes from an excel file from a known location,indicated as a path
     (its value depends on where you placed your input file).
-    To facilitate this task you may find helpful the methods contained inside the ReadExcel class we declared a few lines before
+    To facilitate this task you may find helpful the methods contained inside the ReadExcel class
     */
     @Autowired
     Environment environment;
 
     @GetMapping("predictFromXls")
     @Operation(description = "Perform several predictions using an excel file as source")
-    public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, PredictException, NoSuchMethodException, InvocationTargetException {
+    public ResponseEntity<List<Double>> predictMultipleResults(@RequestParam(required = true) String modelName) throws Exception {
         if(!environment.containsProperty("source.excel.path")){
             throw new IllegalStateException("please include a path for the source data file (in excel format)");
         }
         String filePath = environment.getProperty("source.excel.path");
 
-        applyModel.init(modelName);
-        List<Double> results = new ArrayList<>();
-        /* //sol:
-        List<RowData> rows = readExcel.toRowData(readExcel.getExcelFileAsWorkbook(filePath));
-        for(RowData row : rows) {
-            results.add(applyModel.predictedValue(row));
-        }
-        */
+        PredictFromXlsxCommand command = beanFactory.getBean(PredictFromXlsxCommand.class, modelName, filePath);
+        List<Double> results = command.execute();
+
         return ResponseEntity.ok(results);
 
     }
@@ -117,9 +115,10 @@ public class ModelController {
     public ResponseEntity<ModelFeatures> getDetails(@PathParam("modelName") String modelName) {
         ModelFeatures feat = new ModelFeatures();
         try {
+            ApplyModel applyModel = beanFactory.getBean(ApplyModel.class);
             applyModel.init(modelName);
             feat.setModelName(modelName);
-            for (String name : applyModel.getModel().m.getNames()) {
+            for (String name : applyModel.getRawModel().getNames()) {
                 feat.getFieldInputNames().add(name);
             }
         } catch (ClassNotFoundException e) {
@@ -151,30 +150,22 @@ public class ModelController {
      * 6) Invoke the predictedValue method to recall the model for the prepared info and return the value
      */
 
-    /*
+
     //solution:
     @Autowired
     WebServicePollutionHistory history;
 
     @GetMapping("onlinePrediction")
     @Operation(description = "Predict the value of Benzene in the next 24 hours. The past values of Benzene and Titanium are retrieved from an external source")
-    public ResponseEntity<Double> getOnlinePrediction(String modelName) throws IllegalAccessException, InstantiationException, ClassNotFoundException, PredictException, NoSuchMethodException, InvocationTargetException {
+    public ResponseEntity<Double> getOnlinePrediction(String modelName) throws Exception {
+        ApplyModel applyModel = beanFactory.getBean(ApplyModel.class);
         applyModel.init(modelName);
-        RowData row = new RowData();
-        String benzene = "benzene_lag";
-        for (int i = 1; i <= 48; i++) {
-            Double value = history.getBenzenelagNumber(i);
-            row.put(benzene + Integer.toString(i), value);
-        }
-        String titanium = "titanium_lag";
-        for (int i = 1; i <= 48; i++) {
-            Double value = history.getTitaniumLagNumber(i);
-            row.put(titanium + Integer.toString(i), value);
-        }
-        Double predictedValue = applyModel.predictedValue(row);
-        logger.info("predicted value for benzene is {}", predictedValue);
+
+        PredictFromWebCommand command = beanFactory.getBean(PredictFromWebCommand.class, modelName);
+        Double predictedValue = command.execute();
+
         return ResponseEntity.ok(predictedValue);
     }
-    */
+
 
 }
