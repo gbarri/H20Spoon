@@ -59,11 +59,11 @@ public class ApplyModel {
         //MultinomialModelPrediction predicted = model.predictMultinomial(row);
         //ClusteringModelPrediction predicted = model.predictClustering(row);
         //BinomialModelPrediction predicted = model.predictBinomial(row);
-        RegressionModelPrediction predicted = model.predictRegression(row);
+        //RegressionModelPrediction predicted = model.predictRegression(row);
         //DimReductionModelPrediction predicted = model.predictDimReduction(row);
         //Word2VecPrediction predicted = model.predictWord2Vec(row);
         //KLimeModelPrediction predicted = model.predictKLime(row);
         logger.info("Predictied {} from {} and input {}", "regression model", modelClassName, row);
-        return predicted.value;
+        return null;
     }
 }
